@@ -1,0 +1,11 @@
+title: "AMRBench_QC"
+subtitle: "Read QC, assembly and gene prediction for bacterial genomes"
+
+# Name Prokka samples after their output file, not the organism line
+prokka_fn_snames: true
+
+module_order:
+  - fastqc
+  - fastp
+  - quast
+  - prokka

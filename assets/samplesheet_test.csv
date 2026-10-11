@@ -1,0 +1,2 @@
+sample,fastq_1,fastq_2
+ERR044595,https://raw.githubusercontent.com/nf-core/test-datasets/bacass/ERR044595_1M_1.fastq.gz,https://raw.githubusercontent.com/nf-core/test-datasets/bacass/ERR044595_1M_2.fastq.gz
