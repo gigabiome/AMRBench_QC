@@ -23,7 +23,7 @@ Each sample has either `fastq_1` and `fastq_2`, or `fasta`:
 
 - Samples with reads run through every step.
 - Samples with a `fasta` skip FastQC, fastp and Unicycler, and go straight to
-  the assembly-level steps: QUAST, CheckM2, PlasmidFinder, Prokka and Bakta.
+  the assembly-level steps: QUAST, CheckM2, Prokka and Bakta.
 
 Both kinds can be mixed in one samplesheet. Columns that are not needed can be
 left out, so a samplesheet of reads only needs `sample,fastq_1,fastq_2` and a
@@ -110,11 +110,6 @@ protein, so resistance genes are named in the Bakta annotation. It does not
 write a separate AMRFinderPlus report and does not screen for resistance point
 mutations.
 
-### PlasmidFinder
-
-The PlasmidFinder database ships inside the tool's container and conda
-package, so nothing needs downloading.
-
 ## Skipping Prokka
 
 Prokka and Bakta both run by default. To annotate with Bakta only:
@@ -141,7 +136,7 @@ nextflow run main.nf -profile singularity --input samplesheet.csv --skip_prokka
 | `--bakta_args` | `''` | Extra options for Bakta, e.g. `'--genus Escherichia --species coli'` |
 
 Bakta is run with `--keep-contig-headers`, so contig names match those in the
-assembly and in the QUAST, PlasmidFinder and Prokka output.
+assembly and in the QUAST and Prokka output.
 
 ## Profiles
 

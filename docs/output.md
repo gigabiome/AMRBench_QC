@@ -44,16 +44,6 @@ output.
   and coding density
 - `checkm2.log`, `diamond_output/`, `protein_files/`: log and intermediate files
 
-## PlasmidFinder
-
-`plasmidfinder/`
-
-- `<sample>.tsv`, `<sample>.txt`: plasmid replicons found, with identity,
-  coverage and the contig each one is on
-- `<sample>.json`: the same results in JSON
-- `<sample>-hit_in_genome_seq.fsa`: the matching sequences from the assembly
-- `<sample>-plasmid_seqs.fsa`: the matching database sequences
-
 ## Prokka
 
 `prokka/<sample>/` (absent when run with `--skip_prokka`)

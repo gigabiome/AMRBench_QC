@@ -13,7 +13,6 @@ include { GUNZIP             } from '../modules/local/gunzip/main'
 include { QUAST              } from '../modules/local/quast/main'
 include { CHECKM2_DBDOWNLOAD } from '../modules/local/checkm2_dbdownload/main'
 include { CHECKM2            } from '../modules/local/checkm2/main'
-include { PLASMIDFINDER      } from '../modules/local/plasmidfinder/main'
 include { PROKKA             } from '../modules/local/prokka/main'
 include { BAKTA_DBDOWNLOAD   } from '../modules/local/bakta_dbdownload/main'
 include { BAKTA              } from '../modules/local/bakta/main'
@@ -84,11 +83,6 @@ workflow AMRBENCH_QC {
         checkm2_db = CHECKM2_DBDOWNLOAD.out.db.collect()
     }
     CHECKM2(assemblies, checkm2_db)
-
-    //
-    // MODULE: Plasmid replicon typing
-    //
-    PLASMIDFINDER(assemblies)
 
     //
     // MODULE: Gene prediction and annotation with Prokka (optional)

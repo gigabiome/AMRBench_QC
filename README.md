@@ -28,8 +28,8 @@
 
 **AMRBench_QC** takes paired-end Illumina reads from one or more bacterial
 genomes and produces quality-checked reads, an assembly, completeness and
-contamination estimates, plasmid replicon typing and an annotated set of genes
-for each sample, plus a single summary report.
+contamination estimates and an annotated set of genes for each sample, plus a
+single summary report.
 
 Genomes that are already assembled can be supplied as FASTA files. These skip
 read QC and assembly and go straight to the assembly-level steps.
@@ -45,7 +45,6 @@ flowchart LR
     H[/assembled genome<br>fasta/] --> X
     X --> E[QUAST<br>assembly QC]
     X --> I[CheckM2<br>completeness and<br>contamination]
-    X --> J[PlasmidFinder<br>plasmid replicons]
     X --> F[Prokka<br>annotation<br>optional]
     X --> K[Bakta<br>annotation with<br>AMRFinderPlus]
     B --> G[MultiQC<br>summary report]
@@ -63,10 +62,9 @@ flowchart LR
 | 3 | [Unicycler](https://github.com/rrwick/Unicycler) | Genome assembly | Reads |
 | 4 | [QUAST](https://quast.sourceforge.net/) | Assembly statistics | Reads and assemblies |
 | 5 | [CheckM2](https://github.com/chklovski/CheckM2) | Completeness and contamination | Reads and assemblies |
-| 6 | [PlasmidFinder](https://bitbucket.org/genomicepidemiology/plasmidfinder) | Plasmid replicon typing | Reads and assemblies |
-| 7 | [Prokka](https://github.com/tseemann/prokka) | Gene prediction and annotation; skip with `--skip_prokka` | Reads and assemblies |
-| 8 | [Bakta](https://github.com/oschwengers/bakta) | Gene prediction and annotation, including AMRFinderPlus resistance gene calls | Reads and assemblies |
-| 9 | [MultiQC](https://multiqc.info/) | One report combining the above | Reads and assemblies |
+| 6 | [Prokka](https://github.com/tseemann/prokka) | Gene prediction and annotation; skip with `--skip_prokka` | Reads and assemblies |
+| 7 | [Bakta](https://github.com/oschwengers/bakta) | Gene prediction and annotation, including AMRFinderPlus resistance gene calls | Reads and assemblies |
+| 8 | [MultiQC](https://multiqc.info/) | One report combining the above | Reads and assemblies |
 
 ## Quick start
 
@@ -132,7 +130,6 @@ later runs.
 |---|---|---|
 | Bakta | Full database, about 30 GB to download and about 70 GB on disk. It includes the AMRFinderPlus database. | `--bakta_db /path/to/db` |
 | CheckM2 | About 1.7 GB to download | `--checkm2_db /path/to/uniref100.KO.1.dmnd` |
-| PlasmidFinder | None; the database ships with the tool | |
 
 The download steps run as normal pipeline jobs, so they need internet access
 from the compute nodes. If your nodes are offline, download the databases on a
@@ -174,7 +171,6 @@ login node and pass their paths. See [docs/usage.md](docs/usage.md#databases).
 | `unicycler/` | Assembled contigs (`<sample>.fasta`) and assembly graph |
 | `quast/` | Assembly statistics per sample |
 | `checkm2/` | Completeness and contamination per sample |
-| `plasmidfinder/` | Plasmid replicon hits per sample |
 | `prokka/` | Prokka annotation per sample (GFF, GenBank, protein and gene FASTA) |
 | `bakta/` | Bakta annotation per sample (GFF3, GenBank, protein and gene FASTA, tables) |
 | `multiqc/` | `multiqc_report.html`, the summary of all samples |
