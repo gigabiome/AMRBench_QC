@@ -17,6 +17,7 @@ process QUAST {
     """
     quast.py \\
         --output-dir ${prefix} \\
+        --labels ${prefix} \\
         --threads ${task.cpus} \\
         ${args} \\
         ${assembly}

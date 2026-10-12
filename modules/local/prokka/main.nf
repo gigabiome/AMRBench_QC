@@ -17,13 +17,19 @@ process PROKKA {
     script:
     def args = task.ext.args ?: ''
     def prefix = "${meta.id}"
+    // Prokka cannot read gzipped FASTA
+    def is_compressed = assembly.name.endsWith('.gz')
+    def fasta = is_compressed ? "${prefix}.input.fasta" : "${assembly}"
+    def decompress = is_compressed ? "gzip -cd ${assembly} > ${fasta}" : ''
     """
+    ${decompress}
+
     prokka \\
         --outdir ${prefix} \\
         --prefix ${prefix} \\
         --kingdom Bacteria \\
         --cpus ${task.cpus} \\
         ${args} \\
-        ${assembly}
+        ${fasta}
     """
 }

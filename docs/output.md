@@ -3,6 +3,9 @@
 All results are written to the directory given by `--outdir`, with one
 sub-directory per tool. `<sample>` is the name from the samplesheet.
 
+Samples supplied as assembled genomes only have QUAST, Prokka and MultiQC
+output.
+
 ## FastQC
 
 `fastqc/`

@@ -30,13 +30,18 @@
 genomes and produces quality-checked reads, an assembly and an annotated set of
 genes for each sample, plus a single summary report.
 
+Genomes that are already assembled can be supplied as FASTA files. These skip
+read QC and assembly and go straight to assembly QC and gene prediction.
+
 ## Pipeline summary
 
 ```mermaid
 flowchart LR
-    A[/samplesheet.csv/] --> B[FastQC<br>raw read QC]
+    A[/reads<br>fastq_1, fastq_2/] --> B[FastQC<br>raw read QC]
     A --> C[fastp<br>trimming]
     C --> D[Unicycler<br>assembly]
+    H[/assembled genome<br>fasta/] --> E
+    H --> F
     D --> E[QUAST<br>assembly QC]
     D --> F[Prokka<br>gene prediction]
     B --> G[MultiQC<br>summary report]
@@ -88,6 +93,25 @@ Add `-resume` to continue a run from where it stopped.
 | `sample` | Sample name, used to name all output files. Must be unique and contain no spaces. |
 | `fastq_1` | Path or URL to the read 1 FASTQ file |
 | `fastq_2` | Path or URL to the read 2 FASTQ file |
+| `fasta` | Optional. Path or URL to an assembled genome (plain or gzipped FASTA) |
+
+Each sample has either `fastq_1` and `fastq_2`, or `fasta`. Reads and
+assemblies can be mixed in one samplesheet.
+
+### Starting from assembled genomes
+
+To run only assembly QC and gene prediction, list the assemblies in the
+`fasta` column. The read columns can be left out entirely:
+
+```csv
+sample,fasta
+SAMPLE_1,/path/to/SAMPLE_1.fasta
+SAMPLE_2,/path/to/SAMPLE_2.fasta
+```
+
+```bash
+nextflow run main.nf -profile docker --input samplesheet.csv --outdir results
+```
 
 ## Parameters
 

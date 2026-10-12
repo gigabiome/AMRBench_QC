@@ -46,14 +46,19 @@ workflow AMRBENCH_QC {
     UNICYCLER(FASTP.out.reads)
 
     //
+    // Assemblies made here plus any supplied directly in the samplesheet
+    //
+    assemblies = UNICYCLER.out.assembly.mix(INPUT_CHECK.out.assemblies)
+
+    //
     // MODULE: Assembly QC
     //
-    QUAST(UNICYCLER.out.assembly)
+    QUAST(assemblies)
 
     //
     // MODULE: Gene prediction and annotation
     //
-    PROKKA(UNICYCLER.out.assembly)
+    PROKKA(assemblies)
 
     //
     // MODULE: MultiQC
@@ -67,7 +72,7 @@ workflow AMRBENCH_QC {
     MULTIQC(multiqc_files, multiqc_config)
 
     emit:
-    assembly       = UNICYCLER.out.assembly // channel: [ val(meta), fasta ]
+    assembly       = assemblies             // channel: [ val(meta), fasta ]
     annotation     = PROKKA.out.annotation  // channel: [ val(meta), dir ]
     multiqc_report = MULTIQC.out.report     // channel: multiqc_report.html
 }
