@@ -10,12 +10,15 @@ process MULTIQC {
 
     output:
     path "multiqc_report.html", emit: report
-    path "multiqc_data", emit: data
+    path "multiqc_report_data", emit: data
 
     script:
     def args = task.ext.args ?: ''
     """
+    # A report title changes MultiQC's default output names, so fix them here
     multiqc \\
+        --force \\
+        --filename multiqc_report \\
         --config ${multiqc_config} \\
         ${args} \\
         .

@@ -87,7 +87,7 @@ files. There is no separate AMRFinderPlus report.
 
 - `multiqc_report.html`: one report combining FastQC, fastp, QUAST, CheckM2,
   Prokka and Bakta results for all samples
-- `multiqc_data/`: the parsed data behind the report
+- `multiqc_report_data/`: the parsed data behind the report
 
 ## Pipeline information
 
