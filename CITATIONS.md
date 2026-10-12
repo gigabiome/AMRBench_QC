@@ -26,6 +26,22 @@
 
   > Seemann T. Prokka: rapid prokaryotic genome annotation. Bioinformatics. 2014;30(14):2068-2069.
 
+- [CheckM2](https://doi.org/10.1038/s41592-023-01940-w)
+
+  > Chklovski A, Parks DH, Woodcroft BJ, Tyson GW. CheckM2: a rapid, scalable and accurate tool for assessing microbial genome quality using machine learning. Nat Methods. 2023;20(8):1203-1212.
+
+- [PlasmidFinder](https://doi.org/10.1128/AAC.02412-14)
+
+  > Carattoli A, Zankari E, García-Fernández A, et al. In silico detection and typing of plasmids using PlasmidFinder and plasmid multilocus sequence typing. Antimicrob Agents Chemother. 2014;58(7):3895-3903.
+
+- [Bakta](https://doi.org/10.1099/mgen.0.000685)
+
+  > Schwengers O, Jelonek L, Dieckmann MA, Beyvers S, Blom J, Goesmann A. Bakta: rapid and standardized annotation of bacterial genomes via alignment-free sequence identification. Microb Genom. 2021;7(11):000685.
+
+- [AMRFinderPlus](https://doi.org/10.1038/s41598-021-91456-0)
+
+  > Feldgarden M, Brover V, Gonzalez-Escalona N, et al. AMRFinderPlus and the Reference Gene Catalog facilitate examination of the genomic links among antimicrobial resistance, stress response, and virulence. Sci Rep. 2021;11(1):12728.
+
 - [MultiQC](https://doi.org/10.1093/bioinformatics/btw354)
 
   > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016;32(19):3047-3048.

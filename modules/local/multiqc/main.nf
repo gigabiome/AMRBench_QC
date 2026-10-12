@@ -5,7 +5,7 @@ process MULTIQC {
     container 'quay.io/biocontainers/multiqc:1.35--pyhdfd78af_2'
 
     input:
-    path multiqc_files, stageAs: 'input/*'
+    path multiqc_files, stageAs: '?/*'
     path multiqc_config
 
     output:
@@ -18,6 +18,6 @@ process MULTIQC {
     multiqc \\
         --config ${multiqc_config} \\
         ${args} \\
-        input
+        .
     """
 }

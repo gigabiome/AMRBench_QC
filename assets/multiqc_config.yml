@@ -8,4 +8,6 @@ module_order:
   - fastqc
   - fastp
   - quast
+  - checkm2
   - prokka
+  - bakta

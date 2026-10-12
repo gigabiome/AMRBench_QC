@@ -1,7 +1,7 @@
 <h1 align="center">AMRBench_QC</h1>
 
 <p align="center">
-  Read QC, assembly and gene prediction for bacterial genomes
+  Read QC, assembly, quality assessment and annotation for bacterial genomes
 </p>
 
 <p align="center">
@@ -27,11 +27,12 @@
 ## Introduction
 
 **AMRBench_QC** takes paired-end Illumina reads from one or more bacterial
-genomes and produces quality-checked reads, an assembly and an annotated set of
-genes for each sample, plus a single summary report.
+genomes and produces quality-checked reads, an assembly, completeness and
+contamination estimates, plasmid replicon typing and an annotated set of genes
+for each sample, plus a single summary report.
 
 Genomes that are already assembled can be supplied as FASTA files. These skip
-read QC and assembly and go straight to assembly QC and gene prediction.
+read QC and assembly and go straight to the assembly-level steps.
 
 ## Pipeline summary
 
@@ -40,24 +41,32 @@ flowchart LR
     A[/reads<br>fastq_1, fastq_2/] --> B[FastQC<br>raw read QC]
     A --> C[fastp<br>trimming]
     C --> D[Unicycler<br>assembly]
-    H[/assembled genome<br>fasta/] --> E
-    H --> F
-    D --> E[QUAST<br>assembly QC]
-    D --> F[Prokka<br>gene prediction]
+    D --> X((assembly))
+    H[/assembled genome<br>fasta/] --> X
+    X --> E[QUAST<br>assembly QC]
+    X --> I[CheckM2<br>completeness and<br>contamination]
+    X --> J[PlasmidFinder<br>plasmid replicons]
+    X --> F[Prokka<br>annotation<br>optional]
+    X --> K[Bakta<br>annotation with<br>AMRFinderPlus]
     B --> G[MultiQC<br>summary report]
     C --> G
     E --> G
+    I --> G
     F --> G
+    K --> G
 ```
 
-| Step | Tool | Purpose |
-|---|---|---|
-| 1 | [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) | Quality report on the raw reads |
-| 2 | [fastp](https://github.com/OpenGene/fastp) | Adapter and quality trimming |
-| 3 | [Unicycler](https://github.com/rrwick/Unicycler) | Genome assembly |
-| 4 | [QUAST](https://quast.sourceforge.net/) | Assembly statistics |
-| 5 | [Prokka](https://github.com/tseemann/prokka) | Gene prediction and annotation |
-| 6 | [MultiQC](https://multiqc.info/) | One report combining all of the above |
+| Step | Tool | Purpose | Runs on |
+|---|---|---|---|
+| 1 | [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) | Quality report on the raw reads | Reads |
+| 2 | [fastp](https://github.com/OpenGene/fastp) | Adapter and quality trimming | Reads |
+| 3 | [Unicycler](https://github.com/rrwick/Unicycler) | Genome assembly | Reads |
+| 4 | [QUAST](https://quast.sourceforge.net/) | Assembly statistics | Reads and assemblies |
+| 5 | [CheckM2](https://github.com/chklovski/CheckM2) | Completeness and contamination | Reads and assemblies |
+| 6 | [PlasmidFinder](https://bitbucket.org/genomicepidemiology/plasmidfinder) | Plasmid replicon typing | Reads and assemblies |
+| 7 | [Prokka](https://github.com/tseemann/prokka) | Gene prediction and annotation; skip with `--skip_prokka` | Reads and assemblies |
+| 8 | [Bakta](https://github.com/oschwengers/bakta) | Gene prediction and annotation, including AMRFinderPlus resistance gene calls | Reads and assemblies |
+| 9 | [MultiQC](https://multiqc.info/) | One report combining the above | Reads and assemblies |
 
 ## Quick start
 
@@ -113,15 +122,37 @@ SAMPLE_2,/path/to/SAMPLE_2.fasta
 nextflow run main.nf -profile docker --input samplesheet.csv --outdir results
 ```
 
+## Databases
+
+Bakta and CheckM2 need databases. By default the pipeline downloads them on
+the first run into `databases/` in the launch directory and reuses them on
+later runs.
+
+| Database | Default download | Use an existing copy |
+|---|---|---|
+| Bakta | Full database, about 30 GB to download and about 70 GB on disk. It includes the AMRFinderPlus database. | `--bakta_db /path/to/db` |
+| CheckM2 | About 1.7 GB to download | `--checkm2_db /path/to/uniref100.KO.1.dmnd` |
+| PlasmidFinder | None; the database ships with the tool | |
+
+The download steps run as normal pipeline jobs, so they need internet access
+from the compute nodes. If your nodes are offline, download the databases on a
+login node and pass their paths. See [docs/usage.md](docs/usage.md#databases).
+
 ## Parameters
 
 | Parameter | Default | Description |
 |---|---|---|
 | `--input` | none (required) | Path to the samplesheet |
 | `--outdir` | `results` | Output directory |
+| `--skip_prokka` | `false` | Do not run Prokka |
+| `--bakta_db` | none | Existing Bakta database directory |
+| `--bakta_db_type` | `full` | Database to download when `--bakta_db` is not set: `full` or `light` |
+| `--checkm2_db` | none | Existing CheckM2 database (`.dmnd` file or the directory holding it) |
+| `--db_dir` | `databases` | Where downloaded databases are kept |
 | `--fastp_args` | `''` | Extra options for fastp |
 | `--unicycler_args` | `''` | Extra options for Unicycler |
 | `--prokka_args` | `''` | Extra options for Prokka, e.g. `'--genus Escherichia --species coli'` |
+| `--bakta_args` | `''` | Extra options for Bakta, e.g. `'--genus Escherichia --species coli'` |
 
 ## Profiles
 
@@ -142,13 +173,16 @@ nextflow run main.nf -profile docker --input samplesheet.csv --outdir results
 | `fastp/` | Trimmed reads and trimming reports |
 | `unicycler/` | Assembled contigs (`<sample>.fasta`) and assembly graph |
 | `quast/` | Assembly statistics per sample |
-| `prokka/` | Annotation per sample (GFF, GenBank, protein and gene FASTA) |
+| `checkm2/` | Completeness and contamination per sample |
+| `plasmidfinder/` | Plasmid replicon hits per sample |
+| `prokka/` | Prokka annotation per sample (GFF, GenBank, protein and gene FASTA) |
+| `bakta/` | Bakta annotation per sample (GFF3, GenBank, protein and gene FASTA, tables) |
 | `multiqc/` | `multiqc_report.html`, the summary of all samples |
 | `pipeline_info/` | Nextflow run time and resource reports |
 
 ## Documentation
 
-- [Usage](docs/usage.md): samplesheet format, parameters, profiles and resources
+- [Usage](docs/usage.md): samplesheet format, databases, parameters, profiles and resources
 - [Output](docs/output.md): every file the pipeline produces
 
 ## Repository layout
